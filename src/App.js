@@ -1,5 +1,6 @@
 import React from "react";
 import Navbar from "./components/Navbar.jsx";
+import Footer from "./components/Footer.jsx";
 import Home from "./components/Home.jsx";
 import Publish from "./components/publishArticle/Publish.jsx";
 import Search from "./components/searchArticle/Search.jsx";
@@ -20,6 +21,7 @@ function App() {
           <Route path="/*" element={<Error />}></Route>
         </Routes>
       </Main>
+      <Footer></Footer>
     </div>
   );
 }

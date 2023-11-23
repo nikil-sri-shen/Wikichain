@@ -58,39 +58,54 @@ function Publish() {
     }
   };
   return (
-    <div className="text-center p-10">
-      <h2 className="text-3xl">Publish Article</h2>
+    <div className="text-center p-6">
+      <h2 className="text-4xl text-black">Publish Article</h2>
       {transactionStatus && <p>{transactionStatus}</p>}
       {isUserRegistered ? (
-        <p className="text-green-700 text-3xl"></p>
+        <div>
+          <br></br>
+          <label className="text-black text-2xl">Title</label>
+          <br></br>
+          <input
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            className="rounded-lg text-black"
+          ></input>
+          <br></br>
+          <label className="text-black text-2xl">Content</label>
+          <br></br>
+          <textarea
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            className="rounded-lg text-black"
+            cols={50}
+            rows={15}
+          />
+          <br></br>
+          <button
+            onClick={handlePublish}
+            className="m-5 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
+          >
+            <span className="flex">
+              <IoMdCreate size={24} className="mr-2" />
+              Publish
+            </span>
+          </button>
+        </div>
       ) : (
-        <p className="text-red-700 text-3xl">⚠️ User is not registered!!!</p>
+        <div>
+          <p className="text-red-700 text-5xl">
+            ⚠️ You are not a registered User!!!
+          </p>
+          <br></br>
+          <p className="text-3xl">Please Register here 👇🏼:</p>
+          <br></br>
+          <a href="/registration" className="text-3xl">
+            Click Here
+          </a>
+          <br></br>
+        </div>
       )}
-      <br></br>
-      <input
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        className="rounded-lg text-black"
-      ></input>
-      <br></br>
-      <br></br>
-      <textarea
-        value={content}
-        onChange={(e) => setContent(e.target.value)}
-        className="rounded-lg text-black"
-        cols={50}
-        rows={15}
-      />
-      <br></br>
-      <button
-        onClick={handlePublish}
-        className="m-5 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
-      >
-        <span className="flex">
-          <IoMdCreate size={24} className="mr-2" />
-          Publish
-        </span>
-      </button>
     </div>
   );
 }
