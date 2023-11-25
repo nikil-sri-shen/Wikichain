@@ -25,7 +25,7 @@ function Navbar() {
   }, [account]);
 
   return (
-    <div className="p-3 top-0 left-0 right-0 z-100 backdrop-blur-md bg-opacity-30 navbar">
+    <div className="fixed p-3 top-0 left-0 right-0 z-100 backdrop-blur-md bg-opacity-30 navbar">
       <ul className="flex">
         <li className="mr-20 glow-text text-3xl">
           <a href="/">

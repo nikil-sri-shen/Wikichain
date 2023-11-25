@@ -58,7 +58,7 @@ function Publish() {
     }
   };
   return (
-    <div className="text-center p-6">
+    <div className="text-center p-6 hover:shadow-4xl">
       <h2 className="text-4xl text-black">Publish Article</h2>
       {transactionStatus && <p>{transactionStatus}</p>}
       {isUserRegistered ? (

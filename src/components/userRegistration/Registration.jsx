@@ -64,7 +64,10 @@ function Registration() {
   };
 
   return (
-    <form onSubmit={handleRegistration} className="text-center p-32">
+    <form
+      onSubmit={handleRegistration}
+      className="text-center p-32 hover:shadow-4xl"
+    >
       {transactionStatus && <p>{transactionStatus}</p>}
       {isUserRegistered ? (
         <div>

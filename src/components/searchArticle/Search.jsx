@@ -13,6 +13,10 @@ function Search() {
   const [query, setQuery] = useState("");
   const [isQueried, setIsQuried] = useState(false);
   const [isUserRegistered, setIsUserRegistered] = useState(false);
+  const [author, setAuthor] = useState("");
+  const [content, setContent] = useState("");
+  const [vote, setVote] = useState("");
+  const [isVerified, setIsVerified] = useState(false);
   const [errorMsg, setErrorMessage] = useState("");
 
   useEffect(() => {
@@ -48,11 +52,11 @@ function Search() {
       if (user.isRegistered) {
         // Call the queryArticle method with the entered title
         const transaction = await decwiki.methods.queryArticle(title).call();
-        console.log(transaction[0]);
-        console.log(transaction[1]);
-        console.log(transaction[2]);
-        console.log(transaction[3]);
-        console.log(transaction[4]);
+        setAuthor(transaction[0]);
+        setTitle(transaction[1]);
+        setContent(transaction[2]);
+        setVote(transaction[3]);
+        setIsVerified(transaction[4]);
         setQuery(transaction);
         setIsQuried(true);
         setErrorMessage("");
@@ -64,7 +68,7 @@ function Search() {
       if (error.message.includes("reverted")) {
         setIsQuried(false);
         setQuery("");
-        setErrorMessage("⚠️ Article not found...!");
+        setErrorMessage("⚠️ Sorry, Article not found...!");
       } else {
         // Handle other types of errors
         console.error(error);
@@ -73,13 +77,73 @@ function Search() {
     }
   };
 
+  const handleVote = async () => {
+    try {
+      // Call the voteArticle method
+      await decwiki.methods
+        .voteArticle(title)
+        .send({ from: account[0], gas: 3000000 });
+
+      const transaction = await decwiki.methods.queryArticle(title).call();
+      setAuthor(transaction[0]);
+      setTitle(transaction[1]);
+      setContent(transaction[2]);
+      setVote(transaction[3]);
+      setIsVerified(transaction[4]);
+      setQuery(transaction);
+      setIsQuried(true);
+      setErrorMessage("");
+      console.log(author);
+      console.log(query);
+
+      // Update local state to reflect that the user has voted
+
+      // You can perform additional actions after a successful vote if needed
+      console.log("Vote successful!");
+    } catch (error) {
+      // Handle errors, such as transaction rejection or failure
+      console.error("Error voting:", error.message);
+    }
+    console.log("Voted...");
+  };
+
+  const handleVerification = async () => {
+    try {
+      // Call the verifyArticle method
+      await decwiki.methods
+        .verifyArticle(title)
+        .send({ from: account[0], gas: 3000000 });
+
+      // Update local state to reflect that the article has been verified
+      const transaction = await decwiki.methods.queryArticle(title).call();
+      setAuthor(transaction[0]);
+      setTitle(transaction[1]);
+      setContent(transaction[2]);
+      setVote(transaction[3]);
+      setIsVerified(transaction[4]);
+      setQuery(transaction);
+      setIsQuried(true);
+      setErrorMessage("");
+      console.log(author);
+      console.log(query);
+
+      // You can perform additional actions after a successful verification if needed
+      console.log("Verification successful!");
+    } catch (error) {
+      // Handle errors, such as transaction rejection or failure
+      console.error("Error verifying article:", error.message);
+    }
+    console.log("Verified...");
+  };
+
   return (
     <form onSubmit={handleSearch}>
-      <div className="text-center p-20">
+      <div className="text-center p-20 hover:shadow-4xl">
         {isUserRegistered ? (
           <div>
-            <p>{errorMsg}</p>
-            <label className="text-3xl">
+            <p className="text-5xl">{errorMsg}</p>
+            <br />
+            <label className="text-3xl text-black">
               Title
               <br></br>
               <br></br>
@@ -103,48 +167,46 @@ function Search() {
             {isQueried ? (
               <div>
                 <div className="bg-white text-black border-t-2 border-b-2 border-x-2 border-black">
-                  <span className="text-5xl text-orange-500">{query[1]}</span>
+                  <span className="text-5xl text-orange-500">{title}</span>
                   <br />
-                  DecWiki.org
+                  <span className="text-sm">DecWiki.org</span>
                   <hr className="bg-black border-t-2 border-black"></hr>
-                  <div className="text-3xl m-6">{query[2]}</div>
-                  <div className="flex justify-between">
-                    <div className="flex m-16">
-                      <button>
-                        <FaThumbsUp
-                          size={30}
-                          className="fill-blue-500 hover:fill-blue-800"
-                        ></FaThumbsUp>
+                  <div className="text-3xl m-6">{content}</div>
+                </div>
+                <div className="flex items-center justify-between">
+                  <button
+                    className="flex bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
+                    onClick={handleVote}
+                  >
+                    <FaThumbsUp size={30}></FaThumbsUp>
+                    <span className="ml-4 text-xl">{vote}</span>
+                  </button>
+                  {isVerified ? (
+                    <p className="flex m-6 ml-4">
+                      <FaCheckCircle
+                        size={24}
+                        style={{ color: "green" }}
+                      ></FaCheckCircle>
+                      Verified
+                    </p>
+                  ) : (
+                    <p className="m-6 ml-4">
+                      <span className="flex text-lg">
+                        <FaTimesCircle
+                          size={24}
+                          style={{ color: "red" }}
+                          className="mr-2"
+                        ></FaTimesCircle>
+                        Not verified
+                      </span>
+                      <button
+                        className="m-5 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
+                        onClick={handleVerification}
+                      >
+                        Verify
                       </button>
-                      <span className="ml-4 text-xl">{query[3]}</span>
-                    </div>
-                    <div>
-                      {query[4] ? (
-                        <p className="flex m-6">
-                          <FaCheckCircle
-                            size={24}
-                            style={{ color: "green" }}
-                          ></FaCheckCircle>
-                          Verified
-                        </p>
-                      ) : (
-                        <p className="m-6">
-                          <span className="flex text-lg">
-                            <FaTimesCircle
-                              size={24}
-                              style={{ color: "red" }}
-                              className="mr-2"
-                            ></FaTimesCircle>
-                            Not verified
-                          </span>
-
-                          <button className="m-5 bg-black hover:bg-orange-500 text-white hover:text-black font-bold py-2 px-4 rounded">
-                            Verify
-                          </button>
-                        </p>
-                      )}
-                    </div>
-                  </div>
+                    </p>
+                  )}
                 </div>
               </div>
             ) : (

@@ -12,6 +12,8 @@ function App() {
   return (
     <div className="text-white">
       <Navbar></Navbar>
+      <br />
+      <br />
       <Main>
         <Routes>
           <Route exact path="/" element={<Home />}></Route>
