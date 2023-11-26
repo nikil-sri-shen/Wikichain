@@ -3,12 +3,14 @@ import { useState, useEffect } from "react";
 import { MdLogin } from "react-icons/md";
 import web3 from "../../web3.js";
 import decwiki from "../../decwiki.js";
+import Loading from "../Loading.jsx";
 
 function Registration() {
   const [userName, setUserName] = useState("");
   const [account, setAccount] = useState("");
   const [transactionStatus, setTransactionStatus] = useState("");
   const [isUserRegistered, setIsUserRegistered] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkUserRegistration = async () => {
@@ -23,9 +25,11 @@ function Registration() {
         const userIsRegistered = user && user.isRegistered;
         // Update state accordingly
         setIsUserRegistered(userIsRegistered);
+        setIsLoading(false);
       } catch (error) {
         // Handle errors, e.g., log them or show an error message
         console.error("Error checking user registration:", error);
+        setIsLoading(false);
       }
     };
 
@@ -64,43 +68,51 @@ function Registration() {
   };
 
   return (
-    <form
-      onSubmit={handleRegistration}
-      className="text-center p-32 hover:shadow-4xl"
-    >
-      {transactionStatus && <p>{transactionStatus}</p>}
-      {isUserRegistered ? (
-        <div>
-          <p className="text-white text-5xl">
-            ✅ You are already a registered user!!!
-          </p>
-        </div>
+    <div>
+      {isLoading ? (
+        <Loading></Loading>
       ) : (
         <div>
-          <label className="text-3xl">
-            User Name
-            <br></br>
-            <br></br>
-            <input
-              type="text"
-              value={userName}
-              onChange={(e) => setUserName(e.target.value)}
-              className="text-black"
-            />
-          </label>
-          <br></br>
-          <button
-            type="submit"
-            className="m-5 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
+          <form
+            onSubmit={handleRegistration}
+            className="text-center p-32 hover:shadow-4xl m-40"
           >
-            <span className="flex">
-              <MdLogin size={28} className="mr-2" />
-              Register
-            </span>
-          </button>
+            {transactionStatus && <p>{transactionStatus}</p>}
+            {isUserRegistered ? (
+              <div>
+                <p className="text-white text-5xl">
+                  ✅ You are already a registered user!!!
+                </p>
+              </div>
+            ) : (
+              <div>
+                <label className="text-3xl">
+                  User Name
+                  <br></br>
+                  <br></br>
+                  <input
+                    type="text"
+                    value={userName}
+                    onChange={(e) => setUserName(e.target.value)}
+                    className="text-black"
+                  />
+                </label>
+                <br></br>
+                <button
+                  type="submit"
+                  className="m-5 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
+                >
+                  <span className="flex">
+                    <MdLogin size={28} className="mr-2" />
+                    Register
+                  </span>
+                </button>
+              </div>
+            )}
+          </form>
         </div>
       )}
-    </form>
+    </div>
   );
 }
 

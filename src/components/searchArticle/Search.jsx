@@ -6,6 +6,7 @@ import { FaTimesCircle } from "react-icons/fa";
 import { FaThumbsUp } from "react-icons/fa";
 import web3 from "../../web3";
 import decwiki from "../../decwiki";
+import Loading from "../Loading.jsx";
 
 function Search() {
   const [title, setTitle] = useState("");
@@ -18,6 +19,7 @@ function Search() {
   const [vote, setVote] = useState("");
   const [isVerified, setIsVerified] = useState(false);
   const [errorMsg, setErrorMessage] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const checkUserRegistration = async () => {
@@ -32,9 +34,11 @@ function Search() {
         const userIsRegistered = user && user.isRegistered;
         // Update state accordingly
         setIsUserRegistered(userIsRegistered);
+        setIsLoading(false);
       } catch (error) {
         // Handle errors, e.g., log them or show an error message
         console.error("Error checking user registration:", error);
+        setIsLoading(false);
       }
     };
 
@@ -137,94 +141,116 @@ function Search() {
   };
 
   return (
-    <form onSubmit={handleSearch}>
-      <div className="text-center p-20 hover:shadow-4xl">
-        {isUserRegistered ? (
-          <div>
-            <p className="text-5xl">{errorMsg}</p>
-            <br />
-            <label className="text-3xl text-black">
-              Title
-              <br></br>
-              <br></br>
-              <input
-                type="text"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                className="text-black rounded-md"
-              />
-            </label>
-            <br></br>
-            <button
-              type="submit"
-              className="m-5 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
-            >
-              <span className="flex">
-                <FaSearch size={24} className="mr-2" />
-                Search
-              </span>
-            </button>
-            {isQueried ? (
-              <div>
-                <div className="bg-white text-black border-t-2 border-b-2 border-x-2 border-black">
-                  <span className="text-5xl text-orange-500">{title}</span>
+    <div>
+      {isLoading ? (
+        <Loading></Loading>
+      ) : (
+        <div>
+          <form onSubmit={handleSearch}>
+            <div className="text-center p-20">
+              {isUserRegistered ? (
+                <div className="hover:shadow-4xl mx-48 py-20">
+                  <p className="text-5xl">{errorMsg}</p>
                   <br />
-                  <span className="text-sm">DecWiki.org</span>
-                  <hr className="bg-black border-t-2 border-black"></hr>
-                  <div className="text-3xl m-6">{content}</div>
-                </div>
-                <div className="flex items-center justify-between">
+                  <label className="text-3xl text-black">
+                    Title
+                    <br></br>
+                    <br></br>
+                    <input
+                      type="text"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="text-black rounded-md"
+                    />
+                  </label>
+                  <br></br>
                   <button
-                    className="flex bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
-                    onClick={handleVote}
+                    type="submit"
+                    className="m-5 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
                   >
-                    <FaThumbsUp size={30}></FaThumbsUp>
-                    <span className="ml-4 text-xl">{vote}</span>
+                    <span className="flex">
+                      <FaSearch size={24} className="mr-2" />
+                      Search
+                    </span>
                   </button>
-                  {isVerified ? (
-                    <p className="flex m-6 ml-4">
-                      <FaCheckCircle
-                        size={24}
-                        style={{ color: "green" }}
-                      ></FaCheckCircle>
-                      Verified
-                    </p>
+                  {isQueried ? (
+                    <div>
+                      <div className="bg-white text-black border-t-2 border-b-2 border-x-2 border-gray-600 m-10 rounded-md">
+                        <span className="text-5xl text-orange-500">
+                          {query[1]}
+                        </span>
+                        <br />
+                        <div className="flex justify-between m-2">
+                          <span className="text-sm">
+                            <a href="/">DecWiki.org</a>
+                          </span>
+                          <br />
+                          <span className="text-sm">
+                            Published by :{author.slice(0, 12)}...
+                          </span>
+                        </div>
+                        <hr className="bg-black border-t-2 border-gray-600"></hr>
+                        <div className="text-3xl m-6">{content}</div>
+                      </div>
+                      <div className="flex items-center justify-between m-10">
+                        <button
+                          className="flex bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
+                          onClick={handleVote}
+                        >
+                          <FaThumbsUp size={30}></FaThumbsUp>
+                          <span className="ml-4 text-xl">{vote}</span>
+                        </button>
+                        {isVerified ? (
+                          <p className="flex m-6 ml-4 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded">
+                            <FaCheckCircle
+                              size={24}
+                              style={{ color: "green" }}
+                              className="mr-2"
+                            ></FaCheckCircle>
+                            Verified
+                          </p>
+                        ) : (
+                          <p className="m-6 ml-4 ">
+                            <span className="flex text-lg bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded">
+                              <FaTimesCircle
+                                size={24}
+                                style={{ color: "red" }}
+                                className="mr-2"
+                              ></FaTimesCircle>
+                              Not verified
+                            </span>
+                            <button
+                              className="m-5 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
+                              onClick={handleVerification}
+                            >
+                              Verify
+                            </button>
+                          </p>
+                        )}
+                      </div>
+                    </div>
                   ) : (
-                    <p className="m-6 ml-4">
-                      <span className="flex text-lg">
-                        <FaTimesCircle
-                          size={24}
-                          style={{ color: "red" }}
-                          className="mr-2"
-                        ></FaTimesCircle>
-                        Not verified
-                      </span>
-                      <button
-                        className="m-5 bg-black hover:bg-white text-white hover:text-gray-700 font-bold py-2 px-4 rounded"
-                        onClick={handleVerification}
-                      >
-                        Verify
-                      </button>
-                    </p>
+                    <div></div>
                   )}
                 </div>
-              </div>
-            ) : (
-              <div></div>
-            )}
-          </div>
-        ) : (
-          <div>
-            <p className="text-red-700 text-5xl">
-              ⚠️ You are not a registered User!!!
-            </p>
-            <br></br>
-            <br></br>
-            <br></br>
-          </div>
-        )}
-      </div>
-    </form>
+              ) : (
+                <div className="py-48 text-center justify-center hover:shadow-4xl">
+                  <p className="text-red-700 text-5xl">
+                    ⚠️ You are not a registered User!!!
+                  </p>
+                  <br></br>
+                  <p className="text-3xl">Please Register here 👇🏼:</p>
+                  <br></br>
+                  <a href="/registration" className="text-3xl">
+                    Click Here
+                  </a>
+                </div>
+              )}
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
   );
 }
 
