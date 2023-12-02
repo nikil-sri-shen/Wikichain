@@ -10,7 +10,7 @@ import { MdLogin } from "react-icons/md";
 import web3 from "../web3.js";
 
 function Navbar() {
-  const [account, setAccount] = useState("");
+  const [account, setAccount] = useState("Not Connected");
   const [shortendAccount, setShortendAccount] = useState("");
 
   useEffect(() => {

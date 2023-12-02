@@ -12,11 +12,15 @@ function Publish() {
   const [account, setAccount] = useState("");
   const [transactionStatus, setTransactionStatus] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [errMsg, setErrorMessage] = useState("");
+  // const [isQueried, setIsQuried] = useState(false);
 
   useEffect(() => {
     const checkUserRegistration = async () => {
       const account = await web3.eth.getAccounts();
+
       setAccount(account);
+
       try {
         // Assuming `wiki` is your contract instance
         // console.log(account);
@@ -41,9 +45,9 @@ function Publish() {
     try {
       // Get the current Ethereum account
       const account = await web3.eth.getAccounts();
-      // const user = await wiki.methods.users(account[0]).call();
 
       // Call the publishArticle function in the smart contract
+
       const transaction = await decwiki.methods
         .publishArticle(title, content)
         .send({
@@ -51,13 +55,17 @@ function Publish() {
           gas: 3000000,
         });
       console.log(transaction);
-      setTransactionStatus(
-        `Transaction successful! Transaction hash: ${transaction.transactionHash}`
-      );
-
+      setTransactionStatus("Transaction successful!!!");
       console.log("Article published successfully!");
     } catch (error) {
-      console.error("Error publishing article:", error);
+      // Handle errors, e.g., show an error message
+      if (error.message.includes("reverted")) {
+        setErrorMessage("⚠️ Sorry, Article already exist...!");
+      } else {
+        // Handle other types of errors
+        console.error(error);
+        setErrorMessage("An error occurred. Please try again.");
+      }
     }
   };
   return (
@@ -66,6 +74,7 @@ function Publish() {
         <Loading></Loading>
       ) : (
         <div className="hover:shadow-4xl m-28">
+          {errMsg && <p className="text-5xl p-10">{errMsg}</p>}
           {transactionStatus && <p>{transactionStatus}</p>}
           {isUserRegistered ? (
             <div>
